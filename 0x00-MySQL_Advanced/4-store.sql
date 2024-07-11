@@ -1,4 +1,4 @@
--- Write a SQL script that lists all bands with Glam rock as their main style, ranked by their longevity
+-- Write a SQL script that creates a trigger that decreases the quantity of an item after adding a new order.
 
 
 DELIMITER $$
