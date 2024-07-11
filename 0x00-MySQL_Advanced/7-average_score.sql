@@ -3,7 +3,7 @@
 
 DELIMITER $$
 
-CREATE PROCEDURE ComputeAverageScoreForUser (IN user_id INT)
+CREATE PROCEDURE ComputeAverageScoreForUser(IN user_id INT)
 BEGIN
     DECLARE total_score INT DEFAULT 0;
 
