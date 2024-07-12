@@ -17,6 +17,13 @@ BEGIN
         -- Get the first user ID from the temporary table
         SELECT id INTO user_id FROM tmp_user_ids LIMIT 1;
 
+        -- print all id
+        SELECT "--";
+        SELECT * FROM tmp_user_ids;
+        SELECt id FROM tmp_user_ids;
+	SELECT user_id;
+	SELECT "--";
+
         -- Calculate the total weighted score and total weight for the current user
         SELECT SUM(c.score * p.weight), SUM(p.weight)
         INTO total_weighted_score, total_weight
@@ -44,3 +51,43 @@ BEGIN
 END $$
 
 DELIMITER ;
+
+-- output
+-- id      name    average_score
+-- 1       Bob     90.6667
+-- 2       Jeanne  79
+-- id      name    weight
+-- 1       C is fun        1
+-- 2       Python is cool  2
+-- user_id project_id      score
+-- 1       1       80
+-- 1       2       96
+-- 2       1       91
+-- 2       2       73
+-- --
+-- --
+-- id
+-- 1
+-- 2
+-- id
+-- 1
+-- 2
+-- user_id
+-- 1
+-- --
+-- --
+-- --
+-- --
+-- id
+-- 2
+-- id
+-- 2
+-- user_id
+-- 2
+-- --
+-- --
+-- --
+-- --
+-- id      name    average_score
+-- 1       Bob     90.6667
+-- 2       Jeanne  79
