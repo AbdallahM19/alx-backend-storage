@@ -19,6 +19,39 @@ def count_calls(method: Callable) -> Callable:
         return method(self, *args, **kwargs)
     return wrap_incr
 
+def call_history(method: Callable) -> Callable:
+    """Decorator to store the history of calls to a function"""
+    @wraps(method)
+    def wrap_history(self, *args, **kwargs) -> Any:
+        """Wrap the method to store the history of calls"""
+        input_key = "{}.inputs".format(method.__qualname__)
+        output_key = "{}.outputs".format(method.__qualname__)
+
+        self._redis.rpush(input_key, str(args))
+        res = method(self, *args, **kwargs)
+        self._redis.rpush(output_key, res)
+        return res
+    return wrap_history
+
+def replay(method: Callable) -> None:
+    """Decorator to replay the history of calls to a function"""
+    redis_instance = method.__self__._redis
+    input_key = "{}.inputs".format(method.__qualname__)
+    output_key = "{}.outputs".format(method.__qualname__)
+
+    inputs = redis_instance.lrange(input_key, 0, -1)
+    outputs = redis_instance.lrange(output_key, 0, -1)
+    print("{} was called {} times:".format(
+        method.__qualname__,
+        len(inputs)
+    ))
+    for in_args, out_args in zip(inputs, outputs):
+        print("{}(*{}) -> {}".format(
+            method.__qualname__,
+            in_args.decode("utf-8"),
+            out_args
+        ))
+
 class Cache:
     """class cache"""
     def __init__(self) -> None:
@@ -27,6 +60,7 @@ class Cache:
         self._redis.flushdb()
 
     @count_calls
+    @call_history
     def store(self, data: Union[str, bytes, int, float]) -> str:
         """store data in cache"""
         key = str(uuid4())
