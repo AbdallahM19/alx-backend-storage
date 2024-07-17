@@ -4,7 +4,7 @@
 from pymongo import MongoClient
 
 
-def log_stats_2(collection):
+def log_stats(collection):
     """
     a Python script that provides
     some stats about Nginx

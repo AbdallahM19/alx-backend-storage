@@ -25,7 +25,7 @@ def log_stats_2(collection):
     print("{} status check".format(status_check))
 
 
-def log_stats_ips():
+def log_stats_ips(collection):
     """
     Improve 12-log_stats.py by adding
     the top 10 of the most present IPs
