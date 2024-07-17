@@ -4,7 +4,7 @@
 from pymongo import MongoClient
 
 
-def log_stats(collection):
+def log_stats_2(collection):
     """
     a Python script that provides
     some stats about Nginx
@@ -19,8 +19,11 @@ def log_stats(collection):
         count = collection.count_documents({"method": method})
         print("\tmethod {}: {}".format(method, count))
 
-    status_check = collection.count_documents({"method": "GET", "path": "/status"})
+    status_check = collection.count_documents(
+        {"method": "GET", "path": "/status"}
+    )
     print("{} status check".format(status_check))
+
 
 if __name__ == "__main__":
     client = MongoClient('mongodb://127.0.0.1:27017')
