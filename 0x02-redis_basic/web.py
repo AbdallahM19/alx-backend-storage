@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
-"""
-Web caching with Redis
-"""
+"""Web caching with Redis"""
 import redis
 import requests
 from functools import wraps
@@ -16,12 +14,12 @@ def cache_data(method: Callable) -> Callable:
     @wraps(method)
     def wrap_url(url: str) -> str:
         """Wrap the url to cache it in Redis"""
-        redis_client.incr(f'count:{url}')
-        result = redis_client.get(f'result:{url}')
+        redis_client.incr('count:{}'.format(url))
+        result = redis_client.get('result:{}'.format(url))
         if result:
             return result.decode('utf-8')
         res = method(url)
-        redis_client.setex(f'result:{url}', 10, result)
+        redis_client.setex('result:{}'.format(url), 10, result)
         return res
     return wrap_url
 
