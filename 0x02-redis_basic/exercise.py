@@ -37,8 +37,8 @@ def call_history(method: Callable) -> Callable:
 def replay(method: Callable) -> None:
     """Decorator to replay the history of calls to a function"""
     redis_instance = method.__self__._redis
-    input_key = "{}.inputs".format(method.__qualname__)
-    output_key = "{}.outputs".format(method.__qualname__)
+    input_key = "{}:inputs".format(method.__qualname__)
+    output_key = "{}:outputs".format(method.__qualname__)
 
     inputs = redis_instance.lrange(input_key, 0, -1)
     outputs = redis_instance.lrange(output_key, 0, -1)
