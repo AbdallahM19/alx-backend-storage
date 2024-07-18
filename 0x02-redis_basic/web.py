@@ -10,10 +10,6 @@ from typing import Callable
 from functools import wraps
 
 
-"""
-This initializes a Redis client instance 'redis_store'
-that we can use to interact with the Redis server.
-"""
 redis_client = redis.Redis()
 
 
