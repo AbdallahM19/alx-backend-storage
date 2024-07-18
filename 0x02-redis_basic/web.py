@@ -12,16 +12,16 @@ redis_client = redis.Redis()
 def data_cacher(method: Callable) -> Callable:
     """Cache data in Redis"""
     @wraps(method)
-    def invoker(url: str) -> str:
+    def wrap_url(url: str) -> str:
         """Wrap the url to cache it in Redis"""
-        redis_client.incr(f'count:{url}')
-        result = redis_client.get(f'result:{url}')
+        redis_client.incr('count:{}'.format(url))
+        result = redis_client.get('result:{}'.format(url))
         if result:
             return result.decode('utf-8')
         result = method(url)
-        redis_client.setex(f'result:{url}', 10, result)
+        redis_client.setex('result:{}'.format(url), 10, result)
         return result
-    return invoker
+    return wrap_url
 
 
 @data_cacher
