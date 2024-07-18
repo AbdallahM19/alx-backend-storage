@@ -9,23 +9,22 @@ from typing import Callable
 redis_client = redis.Redis()
 
 
-def cache_data(method: Callable) -> Callable:
+def data_cacher(method: Callable) -> Callable:
     """Cache data in Redis"""
     @wraps(method)
-    def wrap_url(url: str) -> str:
+    def invoker(url: str) -> str:
         """Wrap the url to cache it in Redis"""
-        redis_client.incr('count:{}'.format(url))
-        result = redis_client.get('result:{}'.format(url))
+        redis_client.incr(f'count:{url}')
+        result = redis_client.get(f'result:{url}')
         if result:
             return result.decode('utf-8')
-        res = method(url)
-        redis_client.setex('result:{}'.format(url), 10, result)
-        return res
-    return wrap_url
+        result = method(url)
+        redis_client.setex(f'result:{url}', 10, result)
+        return result
+    return invoker
 
 
-@cache_data
+@data_cacher
 def get_page(url: str) -> str:
     """Get page from url"""
-    response = requests.get(url)
-    return response.text
+    return requests.get(url).text
