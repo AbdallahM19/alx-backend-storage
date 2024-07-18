@@ -28,7 +28,7 @@ def call_history(method: Callable) -> Callable:
         input_key = "{}.inputs".format(method.__qualname__)
         output_key = "{}.outputs".format(method.__qualname__)
 
-        self._redis.rpush(input_key, str(args))
+        self._redis.rpush(input_key, args)
         res = method(self, *args, **kwargs)
         self._redis.rpush(output_key, str(res))
         return res
