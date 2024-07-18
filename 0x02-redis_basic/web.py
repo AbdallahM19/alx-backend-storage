@@ -27,6 +27,7 @@ def cache_data(method: Callable) -> Callable:
         if res:
             return res.decode('utf-8')
         res = method(url)
+        redis_client.set('count:{}'.format(url), 0)
         redis_client.setex('result:{}'.format(url), 10, res)
         return res
     return wrap_url
