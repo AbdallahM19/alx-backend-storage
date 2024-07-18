@@ -2,29 +2,26 @@
 """
 Web caching with Redis
 """
-
-
 import redis
 import requests
 from functools import wraps
+from typing import Callable
 
 
 redis_client = redis.Redis()
 
 
-def cache_data(method):
+def cache_data(method: Callable) -> Callable:
     """Cache data in Redis"""
     @wraps(method)
-    def wrap_url(url):
+    def wrap_url(url: str) -> str:
         """Wrap the url to cache it in Redis"""
-        res = redis_client.get("cached:" + url)
-        if res:
-            return res.decode("utf-8")
-        key_res = "count:" + url
+        redis_client.incr(f'count:{url}')
+        result = redis_client.get(f'result:{url}')
+        if result:
+            return result.decode('utf-8')
         res = method(url)
-        redis_client.incr(key_res)
-        redis_client.set(key_res, res, ex=10)
-        redis_client.expire(key_res, 10)
+        redis_client.setex(f'result:{url}', 10, result)
         return res
     return wrap_url
 
@@ -34,7 +31,3 @@ def get_page(url: str) -> str:
     """Get page from url"""
     response = requests.get(url)
     return response.text
-
-
-if __name__ == "__main__":
-    get_page('http://slowwly.robertomurray.co.uk')
