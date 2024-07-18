@@ -17,13 +17,14 @@ def cache_data(method):
     @wraps(method)
     def wrap_url(url):
         """Wrap the url to cache it in Redis"""
-        res = redis_client.get('cached:{}'.format(url))
+        res = redis_client.get("cached:" + url)
         if res:
-            return res.decode('utf-8')
+            return res.decode("utf-8")
+        key_res = "count:" + url
         res = method(url)
-        redis_client.incr('count:{}'.format(url))
-        redis_client.set('count:{}'.format(url), res, ex=10)
-        redis_client.expire('result:{}'.format(url), 10)
+        redis_client.incr(key_res)
+        redis_client.set(key_res, res, ex=10)
+        redis_client.expire(key_res, 10)
         return res
     return wrap_url
 
